@@ -1,10 +1,16 @@
-import { mouse, left, right, up, down, Button, straightTo, Point } from "@nut-tree/nut-js";
+import { mouse, left, right, up, down, Button, straightTo, Point, screen, Region } from "@nut-tree/nut-js";
+import Jimp from "jimp";
 import EventEmitter from "events";
 import { Direction } from "../types";
 
 export class ReturningData extends EventEmitter {
   getData = () => {
     this.emit("position", getMousePosition());
+    // this.emit("scrn", getScreenshot());
+  };
+
+  getScrnshot = () => {
+    this.emit("scrn", getScreenshot());
   };
 }
 
@@ -62,6 +68,37 @@ const drawCircle = async (radius: number) => {
 const getMousePosition = async () => {
   const position = await mouse.getPosition();
   return position;
+};
+
+const getScreenshot = async () => {
+  try {
+    const mousePosition: Point = await getMousePosition();
+    const left = mousePosition.x - 100;
+    const top = mousePosition.y - 100;
+    const region = new Region(left, top, 200, 200);
+    const screenshot = await screen.grabRegion(region);
+    const screenshotRGB = await screenshot.toRGB();
+
+    // const jimpImg = new Jimp({ data: screenshot, width: 200, height: 200 }, (err: any) => {
+    const jimpImg = new Jimp(screenshotRGB, (err: unknown) => {
+      if (err) {
+        console.log(err);
+      }
+    });
+
+    const jimpBuffer = await jimpImg.getBufferAsync(Jimp.MIME_PNG);
+
+    const base64Img = jimpBuffer.toString("base64");
+
+    return base64Img;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const handleScreenshot = () => {
+  console.log("Handle Srns");
+  getScreenshot();
 };
 
 export const handleMouseMove = async (method: string, params: number[]) => {
