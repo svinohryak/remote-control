@@ -3,6 +3,7 @@ import { parser } from "./utiles";
 import { controller } from "./controller";
 import { ReturningData } from "./services";
 import { Point } from "@nut-tree/nut-js";
+import { httpServer } from "../http_server";
 
 export const webSocketServer = (port: number) => {
   const wsServer = new WebSocketServer({ port });
@@ -11,9 +12,10 @@ export const webSocketServer = (port: number) => {
     console.log(`Websocket server started on ${port} port`);
 
     const duplex = createWebSocketStream(ws, { decodeStrings: false });
+    duplex.write("Connected");
 
     ws.on("message", function message(data) {
-      console.log("received: %s", data);
+      console.log("received command: %s", data);
 
       const [methods, params] = parser(data.toString());
       const subCommand = methods[1];
@@ -43,8 +45,6 @@ export const webSocketServer = (port: number) => {
       }
     });
 
-    ws.send("Connected");
-
     ws.on("close", () => {
       console.log("Socket was closed");
     });
@@ -55,6 +55,13 @@ export const webSocketServer = (port: number) => {
   });
 
   wsServer.on("close", () => console.log("Disconnected"));
-  // duplex.pipe(process.stdout);
-  // process.stdin.pipe(duplex);
+
+  ["SIGINT", "SIGTERM", "SIGQUIT"].forEach((signal) =>
+    process.on(signal, () => {
+      console.log("\r\n Servers and process were closed");
+      wsServer.close();
+      httpServer.close();
+      process.exit();
+    })
+  );
 };

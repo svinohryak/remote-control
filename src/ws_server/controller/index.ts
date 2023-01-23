@@ -1,4 +1,4 @@
-import { handleMouseMove, handleDraw } from "../services";
+import { handleMouseMove, handleDraw, handleScreenshot } from "../services";
 
 export const controller = (methods: string[], params: number[]) => {
   const [key, method] = methods;
@@ -10,6 +10,10 @@ export const controller = (methods: string[], params: number[]) => {
 
     case "draw":
       handleDraw(method, params);
+      break;
+
+    case "prnt":
+      handleScreenshot();
       break;
 
     default:

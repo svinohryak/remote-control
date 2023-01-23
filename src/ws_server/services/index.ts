@@ -6,7 +6,6 @@ import { Direction } from "../types";
 export class ReturningData extends EventEmitter {
   getData = () => {
     this.emit("position", getMousePosition());
-    // this.emit("scrn", getScreenshot());
   };
 
   getScrnshot = () => {
@@ -79,7 +78,6 @@ const getScreenshot = async () => {
     const screenshot = await screen.grabRegion(region);
     const screenshotRGB = await screenshot.toRGB();
 
-    // const jimpImg = new Jimp({ data: screenshot, width: 200, height: 200 }, (err: any) => {
     const jimpImg = new Jimp(screenshotRGB, (err: unknown) => {
       if (err) {
         console.log(err);
@@ -93,12 +91,20 @@ const getScreenshot = async () => {
     return base64Img;
   } catch (error) {
     console.log(error);
+    console.log("\r\n\r\nOUT OF SCREEN");
   }
 };
 
+// const getScreenSize = async (): Promise<[width: number, height: number]> => {
+//   const width = await screen.width();
+//   const height = await screen.height();
+
+//   return [width, height];
+// };
+
 export const handleScreenshot = () => {
-  console.log("Handle Srns");
-  getScreenshot();
+  // console.log("Handle Srns");
+  // getScreenshot();
 };
 
 export const handleMouseMove = async (method: string, params: number[]) => {
