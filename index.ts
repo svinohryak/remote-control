@@ -1,5 +1,4 @@
-import { httpServer } from "./src/http_server/index.js";
-import { mouse } from "@nut-tree/nut-js";
+import { httpServer } from "./src/http_server/index";
 
 const HTTP_PORT = 8181;
 
